@@ -10,3 +10,5 @@ Used for personal project, not tested on a wide variety of midi-files, but shoul
 
 usage:
 `midi2json [FILENAME_IN] [FILENAME_OUT]`
+
+Free to use, modify and/or include in any personal or commercial project.
