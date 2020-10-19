@@ -14,7 +14,7 @@ Each read note (on) and (off) looks like this when converted to json:
 
 Used for personal project, not tested on a wide variety of midi-files, but should handle type 0 (single track) and type 1 (multi track) midi-files. Not tested on type 2.
 
-usage:
+usage:  
 `midi2json [FILENAME_IN] [FILENAME_OUT]`
 
 Free to use, modify and/or include in any personal or commercial project.
