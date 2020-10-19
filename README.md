@@ -1,5 +1,5 @@
 # midi2json
-Simple C tool for converting notes in a midi-file to json.
+Simple C tool for reading notes from a midi-file and writing them to a json-file.
 
 Each read note (on) and (off) looks like this when converted to json:
 
