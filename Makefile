@@ -1,6 +1,6 @@
 CFLAGS=-Wall -g
 
-all: clean midi2json
+all: clean midi2json_pixel
 
 clean:
-	rm -f midi2json
+	rm -f midi2json_pixel

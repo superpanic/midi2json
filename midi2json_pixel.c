@@ -269,16 +269,18 @@ int main(int argc, char *argv[]) {
 					fread(&jump_data_len_byte, sizeof(jump_data_len_byte), 1, file_ptr);
 					if(jump_data_len_byte != 0) die("End of track event has data length > 0. Should be 0. Exiting program.");
 					
-					if(track>0) {
+					if(track>0) { // track 0 do not contain notes
+						if(step<16) fprintf(file_write_ptr, ",\n");
 						while(step<16) {
-							fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": \"\", \"step\": \"%i\"}", ++step);
-							if(step==16) fprintf(file_write_ptr, "\n");
-							else fprintf(file_write_ptr, ",\n");
+							fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": \"\", \"step\": \"%i\"}", step+1);
+							if(step<15) fprintf(file_write_ptr, ",");
+							if(step<15) fprintf(file_write_ptr, "\n");
+							step++;
 						}
 					}
 
 					if(is_first_note) { // no notes
-						fprintf(file_write_ptr, "\t\t\t\"steps\":[]\n}");
+						fprintf(file_write_ptr, "\t\t\t\"steps\":[]\n\t\t},\n");
 						break;
 					} else if(track >= number_of_tracks-1) {
 						fprintf(file_write_ptr, "\n\t\t\t]\n\t\t}\n\t]\n}");
@@ -358,7 +360,8 @@ int main(int argc, char *argv[]) {
 						fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": \"\", \"step\": \"%i\"},\n", step);
 						step++;
 					}
-					fprintf(file_write_ptr, "\t\t\t\t{\"on\": 1, \"key\": \"\", \"step\": \"%i\"}", current_step);
+					fprintf(file_write_ptr, "\t\t\t\t{\"on\": 1, \"key\": \"%u\", \"step\": \"%i\"}", (unsigned char)midi_data[0], current_step);
+					
 
 /*
 					fprintf(file_write_ptr, "\t\t\t\t{\"on\": 1, \"n\":%u, \"delta-time\":%u, \"absolute-time\":%u, \"step\":%u, \"f\":%f, \"v\":%u}", 
