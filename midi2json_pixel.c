@@ -357,7 +357,9 @@ int main(int argc, char *argv[]) {
 					step++;
 					int current_step = absolute_track_time/STEP+1;
 					while(step<current_step) {
-						fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": \"\", \"step\": \"%i\"},\n", step);
+						//fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": \"\", \"step\": \"%i\"},\n", step);
+						//TODO: is this edit correct?
+						fprintf(file_write_ptr, "\t\t\t\t{\"on\": 1, \"key\": \"\", \"step\": \"%i\"},\n", step);
 						step++;
 					}
 					fprintf(file_write_ptr, "\t\t\t\t{\"on\": 1, \"key\": \"%u\", \"step\": \"%i\"}", (unsigned char)midi_data[0], current_step);
