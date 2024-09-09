@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <math.h>
+#include <assert.h>
 
 #define DEBUG 0
 #define TRACK_READ 0
@@ -21,7 +22,7 @@ void print_type_lengths();
 void generate_frequencies(float *m, int len);
 
 int get_16_step(float t);
-int midiNoteToPOIndex(int midiNote, int baseNote = 48);
+int midiNoteToPOIndex(int midiNote, int baseNote);
 
 unsigned int reverse_endian_int(unsigned int x);
 unsigned short reverse_endian_short(unsigned short x);
@@ -39,8 +40,10 @@ const int NOTE_ON         = 0x9;
 const int NOTE_OFF 	  = 0x8;
 const int INSTRUMENT_NAME  = 0x03;
 
-const int BAR = 3840;
-const int STEP = 240;    // 3840/16 = 240
+const int BAR_TICKS = 1920;
+const int BARS = 2;
+const int STEP = (BAR_TICKS * BARS) / 32; //240;    // 3840/16 = 240
+
 
 float MIDI[127];
 
@@ -273,7 +276,7 @@ int main(int argc, char *argv[]) {
 					if(track>0) { // track 0 do not contain notes
 						if(step<16) fprintf(file_write_ptr, ",\n");
 						while(step<16) {
-							fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": \"\", \"step\": \"%i\"}", step+1);
+							//fprintf(file_write_ptr, "\t\t\t\t{\"on\": 1, \"key\": \"\", \"step\": \"%i\"}", step+1);
 							if(step<15) fprintf(file_write_ptr, ",");
 							if(step<15) fprintf(file_write_ptr, "\n");
 							step++;
@@ -357,13 +360,12 @@ int main(int argc, char *argv[]) {
 					else is_first_midi_event = false;
 					step++;
 					int current_step = absolute_track_time/STEP+1;
+					t_1byte key = (unsigned char)midi_data[0];
 					while(step<current_step) {
-						//fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": \"\", \"step\": \"%i\"},\n", step);
-						//TODO: is this edit correct?
-						fprintf(file_write_ptr, "\t\t\t\t{\"on\": 1, \"key\": \"\", \"step\": \"%i\"},\n", step);
+						//fprintf(file_write_ptr, "\t\t\t\t{\"on\": 1, \"key\": \"%u\", \"step\": \"%i\"},\n", key, step);
 						step++;
 					}
-					fprintf(file_write_ptr, "\t\t\t\t{\"on\": 1, \"key\": \"%u\", \"step\": \"%i\"}", (unsigned char)midi_data[0], current_step);
+					fprintf(file_write_ptr, "\t\t\t\t{\"on\": 1, \"key\": \"%u\", \"step\": \"%i\"}", key, current_step);
 					
 
 /*
@@ -455,9 +457,10 @@ int get_16_step(float t) {
 	return 0;
 }
 
-int midiNoteToPOIndex(int midiNote, int baseNote = 48) {
-   assert(midiNote >= baseNote);
-   int note = midiNote-baseNote, octave = note / 12, scaleNote = note % 12;
-   int LUT[12] = {0, 0, 1, 2, 2, 3, 3, 4, 5, 5, 6, 7};
-   return octave * 8 + LUT[scaleNote];
+int midiNoteToPOIndex(int midiNote, int baseNote) {
+	if (baseNote == 0) baseNote = 48;
+	assert(midiNote >= baseNote);
+	int note = midiNote-baseNote, octave = note / 12, scaleNote = note % 12;
+	int LUT[12] = {0, 0, 1, 2, 2, 3, 3, 4, 5, 5, 6, 7};
+	return octave * 8 + LUT[scaleNote];
 }
