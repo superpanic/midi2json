@@ -21,6 +21,7 @@ void print_type_lengths();
 void generate_frequencies(float *m, int len);
 
 int get_16_step(float t);
+int midiNoteToPOIndex(int midiNote, int baseNote = 48)
 
 unsigned int reverse_endian_int(unsigned int x);
 unsigned short reverse_endian_short(unsigned short x);
@@ -452,4 +453,11 @@ unsigned int ticks_per_second(unsigned int ticks_per_beat, unsigned int beats_pe
 
 int get_16_step(float t) {
 	return 0;
+}
+
+int midiNoteToPOIndex(int midiNote, int baseNote = 48) {
+   assert(midiNote >= baseNote);
+   int note = midiNote-baseNote, octave = note / 12, scaleNote = note % 12;
+   int LUT[12] = {0, 0, 1, 2, 2, 3, 3, 4, 5, 5, 6, 7};
+   return octave * 8 + LUT[scaleNote];
 }
