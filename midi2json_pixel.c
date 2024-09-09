@@ -21,7 +21,7 @@ void print_type_lengths();
 void generate_frequencies(float *m, int len);
 
 int get_16_step(float t);
-int midiNoteToPOIndex(int midiNote, int baseNote = 48)
+int midiNoteToPOIndex(int midiNote, int baseNote = 48);
 
 unsigned int reverse_endian_int(unsigned int x);
 unsigned short reverse_endian_short(unsigned short x);
