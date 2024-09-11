@@ -185,6 +185,8 @@ int main(int argc, char *argv[]) {
 	fprintf(file_write_ptr, "\t\"patterns\": [\n");
 
 	int absolute_track_time = 0;
+	int highest_po_index = 0;
+	int lowest_po_index = 128;
 	int highest_note = 0;
 	int lowest_note = 128;
 
@@ -293,10 +295,12 @@ int main(int argc, char *argv[]) {
 					} else if(track >= number_of_tracks-1) {
 						fprintf(file_write_ptr, "\n\t\t\t]\n\t\t}\n\t],");
 						fprintf(file_write_ptr, "\n\t\"number of tracks\": %i,", number_of_tracks-1);
-						fprintf(file_write_ptr, "\n\t\"lowest note\": %i,", lowest_note);
-						fprintf(file_write_ptr, "\n\t\"highest note\": %i", highest_note);
+						fprintf(file_write_ptr, "\n\t\"lowest midi note\": %i,", lowest_note);
+						fprintf(file_write_ptr, "\n\t\"highest midi note\": %i,", highest_note);
+						fprintf(file_write_ptr, "\n\t\"lowest po index\": %i,", lowest_po_index);
+						fprintf(file_write_ptr, "\n\t\"highest po index\": %i", highest_po_index);
 						fprintf(file_write_ptr, "\n}");
-						printf("\n\t lowest note:  %i\n\thighest note: %i\n\n", lowest_note, highest_note);
+						printf("\n\t lowest po index:  %i\n\thighest po index: %i\n\n", lowest_po_index, highest_po_index);
 						goto quit;
 					} else {
 						fprintf(file_write_ptr, "\n\t\t\t]\n\t\t},\n");						
@@ -369,15 +373,22 @@ int main(int argc, char *argv[]) {
 					else is_first_midi_event = false;
 					step++;
 					int current_step = absolute_track_time/STEP+1;
+
 					t_1byte key = (unsigned char)midi_data[0];
+
+					if(lowest_note > key) lowest_note = key;
+					if(highest_note < key) highest_note = key;
+
 					int POIndex = midiNoteToPOIndex(key, 0, -1);
-					if(lowest_note > POIndex) lowest_note = POIndex;
-					if(highest_note < POIndex) highest_note = POIndex;
+					if(lowest_po_index > POIndex) lowest_po_index = POIndex;
+					if(highest_po_index < POIndex) highest_po_index = POIndex;
+
 					while(step<current_step) {
 						// nothing on this step
 						fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": \"\", \"step\": \"%i\"},\n", step);
 						step++;
 					}
+
 					// note on!
 					fprintf(file_write_ptr, "\t\t\t\t{\"on\": 1, \"key\": \"%i\", \"step\": \"%i\"}", POIndex, current_step);
 					step = current_step;
