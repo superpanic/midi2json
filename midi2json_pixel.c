@@ -185,6 +185,8 @@ int main(int argc, char *argv[]) {
 	fprintf(file_write_ptr, "\t\"patterns\": [\n");
 
 	int absolute_track_time = 0;
+	int highest_note = 0;
+	int lowest_note = 128;
 
 	// read midi tracks
 	for(int track = 0; track < number_of_tracks; track++) {
@@ -290,6 +292,7 @@ int main(int argc, char *argv[]) {
 						break;
 					} else if(track >= number_of_tracks-1) {
 						fprintf(file_write_ptr, "\n\t\t\t]\n\t\t}\n\t]\n}");
+						printf("\n\t lowest note:  %i\n\thighest note: %i\n\n", lowest_note, highest_note);
 						goto quit;
 					} else {
 						fprintf(file_write_ptr, "\n\t\t\t]\n\t\t},\n");						
@@ -364,6 +367,8 @@ int main(int argc, char *argv[]) {
 					int current_step = absolute_track_time/STEP+1;
 					t_1byte key = (unsigned char)midi_data[0];
 					int POIndex = midiNoteToPOIndex(key, 0, -1);
+					if(lowest_note > POIndex) lowest_note = POIndex;
+					if(highest_note < POIndex) highest_note = POIndex;
 					while(step<current_step) {
 						// nothing on this step
 						fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": \"\", \"step\": \"%i\"},\n", step);
