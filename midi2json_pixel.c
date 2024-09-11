@@ -291,7 +291,11 @@ int main(int argc, char *argv[]) {
 						fprintf(file_write_ptr, "\t\t\t\"steps\":[]\n\t\t},\n");
 						break;
 					} else if(track >= number_of_tracks-1) {
-						fprintf(file_write_ptr, "\n\t\t\t]\n\t\t}\n\t]\n}");
+						fprintf(file_write_ptr, "\n\t\t\t]\n\t\t}\n\t],");
+						fprintf(file_write_ptr, "\n\t\"number of tracks\": %i,", number_of_tracks-1);
+						fprintf(file_write_ptr, "\n\t\"lowest note\": %i,", lowest_note);
+						fprintf(file_write_ptr, "\n\t\"highest note\": %i", highest_note);
+						fprintf(file_write_ptr, "\n}");
 						printf("\n\t lowest note:  %i\n\thighest note: %i\n\n", lowest_note, highest_note);
 						goto quit;
 					} else {
