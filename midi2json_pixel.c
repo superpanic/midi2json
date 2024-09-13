@@ -7,7 +7,9 @@
 #include <assert.h>
 
 #define DEBUG 0
+#define CLEAN 1
 #define TRACK_READ 0
+#define EMPTY 0
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
@@ -283,7 +285,8 @@ int main(int argc, char *argv[]) {
 						if(step<MAX_STEPS) fprintf(file_write_ptr, ",\n");
 						while(step<MAX_STEPS) {
 							// nothing on this step
-							fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": \"\", \"step\": \"%i\"}", step+1);
+							if(CLEAN) fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": %i}", EMPTY);
+							else fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": %i, \"step\": \"%i\"}", EMPTY, step+1);
 							if(step<MAX_STEPS-1) fprintf(file_write_ptr, ",\n");
 							step++;
 						}
@@ -385,12 +388,14 @@ int main(int argc, char *argv[]) {
 
 					while(step<current_step) {
 						// nothing on this step
-						fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": \"\", \"step\": \"%i\"},\n", step);
+						if(CLEAN) fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": %i},\n", EMPTY);
+						else fprintf(file_write_ptr, "\t\t\t\t{\"on\": 0, \"key\": %i, \"step\": %i},\n", EMPTY, step);
 						step++;
 					}
 
 					// note on!
-					fprintf(file_write_ptr, "\t\t\t\t{\"on\": 1, \"key\": \"%i\", \"step\": \"%i\"}", POIndex, current_step);
+					if(CLEAN) fprintf(file_write_ptr, "\t\t\t\t{\"on\": 1, \"key\": %i}", POIndex );
+					else fprintf(file_write_ptr, "\t\t\t\t{\"on\": 1, \"key\": %i, \"step\": %i}", POIndex, current_step);
 					step = current_step;
 				}
 
